@@ -44,7 +44,7 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
 
   useEffect(() => {
     if (score >= targetScore) {
-      setTimeout(() => onComplete(), 1000);
+      setTimeout(() => onComplete(), 5000);
     }
   }, [score, onComplete]);
 
@@ -69,8 +69,8 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
     return (
       <div className="text-center">
         <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-4xl font-bold text-pink-600 mb-4">¡Excelente!</h2>
-        <p className="text-xl text-gray-700">¡Atrapaste todos los corazones! 💕</p>
+        <h2 className="text-4xl font-bold text-pink-600 mb-4">🙈🙈🙉</h2>
+        <p className="text-xl text-gray-700">¡Atrapaste todos los corazones! 💕 ¡Así como me atrapaste a mí!</p>
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
     return (
       <div className="text-center">
         <div className="text-6xl mb-4">💔</div>
-        <h2 className="text-4xl font-bold text-pink-600 mb-4">¡Casi!</h2>
+        <h2 className="text-4xl font-bold text-pink-600 mb-4">¡Animo mi amor!</h2>
         <p className="text-xl text-gray-700 mb-4">
           Atrapaste {score} de {targetScore} corazones
         </p>

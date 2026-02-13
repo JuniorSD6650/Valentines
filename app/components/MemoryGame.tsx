@@ -6,7 +6,7 @@ interface MemoryGameProps {
   onComplete: () => void;
 }
 
-const emojis = ['💕', '💖', '💗', '💝', '💘', '💞'];
+const emojis = ['🙊', '😘', '💗', '😍', 'D & J', '🔥'];
 
 export default function MemoryGame({ onComplete }: MemoryGameProps) {
   const [cards, setCards] = useState<{ id: number; emoji: string; flipped: boolean; matched: boolean }[]>([]);
@@ -65,7 +65,7 @@ export default function MemoryGame({ onComplete }: MemoryGameProps) {
 
   useEffect(() => {
     if (cards.length > 0 && cards.every((card) => card.matched)) {
-      setTimeout(() => onComplete(), 1500);
+      setTimeout(() => onComplete(), 5500);
     }
   }, [cards, onComplete]);
 
@@ -91,9 +91,9 @@ export default function MemoryGame({ onComplete }: MemoryGameProps) {
 
       {allMatched ? (
         <div className="text-center">
-          <div className="text-6xl mb-4">🎊</div>
-          <h3 className="text-4xl font-bold text-pink-600 mb-2">¡Increíble!</h3>
-          <p className="text-xl text-gray-700">Lo completaste en {moves} movimientos</p>
+          <div className="text-6xl mb-4">💕</div>
+          <h3 className="text-4xl font-bold text-pink-600 mb-2">(D & J)</h3>
+          <p className="text-xl text-gray-700">Sin duda la mejor pareja que encontraste fuimos nosotros jsjs</p>
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-4">
@@ -101,7 +101,7 @@ export default function MemoryGame({ onComplete }: MemoryGameProps) {
             <div
               key={card.id}
               onClick={() => handleCardClick(card.id)}
-              className={`aspect-square rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-center text-5xl ${
+              className={`aspect-square rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-center ${
                 card.matched
                   ? 'bg-green-200 scale-95'
                   : card.flipped
@@ -109,7 +109,13 @@ export default function MemoryGame({ onComplete }: MemoryGameProps) {
                   : 'bg-pink-400 hover:bg-pink-500 hover:scale-105 shadow-md'
               }`}
             >
-              {card.flipped || card.matched ? card.emoji : '❓'}
+              <span className={
+                (card.flipped || card.matched) && card.emoji === 'D & J' 
+                  ? 'text-2xl font-extrabold text-pink-600 leading-tight text-center whitespace-nowrap' 
+                  : 'text-5xl'
+              }>
+                {card.flipped || card.matched ? card.emoji : '❓'}
+              </span>
             </div>
           ))}
         </div>

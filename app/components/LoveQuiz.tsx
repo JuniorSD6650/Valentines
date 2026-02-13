@@ -8,19 +8,19 @@ interface LoveQuizProps {
 
 const questions = [
   {
-    question: '¿Qué es lo más importante en una relación?',
-    options: ['Confianza', 'Dinero', 'Apariencia', 'Fama'],
+    question: '¿Cuando nos conocimos? (Nuestro primer "Hola")',
+    options: ['27 DIC', '29 DIC', '01 ENE', '03 ENE'],
     correct: 0,
   },
   {
-    question: '¿Cuál es el mejor regalo para San Valentín?',
-    options: ['Joyas caras', 'Tiempo de calidad juntos', 'Un carro', 'Ropa de marca'],
-    correct: 1,
+    question: '¿Qué es lo que más me gustó de ti? (Está fácil jsjs)',
+    options: ['Tu personalizad', 'Tu aspecto físico', 'Tu forma de ser', 'Todas las anteriores'],
+    correct: 3,
   },
   {
-    question: '¿Qué símbolo representa el amor verdadero?',
-    options: ['💰', '💎', '❤️', '👑'],
-    correct: 2,
+    question: '¿Cual es el apodo perfecto para mi?',
+    options: ['Mi amorcito', 'Mi peleón', 'Mi niño hermoso', 'Mi dramático'],
+    correct: 1,
   },
 ];
 
@@ -42,7 +42,7 @@ export default function LoveQuiz({ onComplete }: LoveQuizProps) {
         setSelectedAnswer(null);
       } else {
         setShowResult(true);
-        setTimeout(() => onComplete(), 3000);
+        setTimeout(() => onComplete(), 4000);
       }
     }, 1000);
   };
@@ -57,8 +57,8 @@ export default function LoveQuiz({ onComplete }: LoveQuizProps) {
           {score === questions.length
             ? '¡Perfecto!'
             : score >= questions.length / 2
-            ? '¡Muy bien!'
-            : '¡Buen intento!'}
+            ? '¡Muy bien mi vida 💕!'
+            : 'En serio mi amor? 😢'}
         </h2>
         <p className="text-xl text-gray-700">
           Respondiste correctamente {score} de {questions.length} preguntas
