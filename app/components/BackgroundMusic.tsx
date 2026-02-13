@@ -8,28 +8,51 @@ export default function BackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    // Intentar reproducir automáticamente cuando se carga la página
     const playAudio = async () => {
       if (audioRef.current) {
         try {
+          audioRef.current.volume = 0.5; // Volumen al 50%
           await audioRef.current.play();
           setIsPlaying(true);
         } catch (error) {
-          // Si falla la reproducción automática (política del navegador),
-          // el usuario necesitará hacer clic en el botón
-          console.log('Autoplay prevented:', error);
+          // Si falla autoplay, reproducir en la primera interacción
+          setIsPlaying(false);
         }
       }
     };
+
+    // Intentar reproducir inmediatamente
     playAudio();
-  }, []);
+
+    // Si falla, reproducir con cualquier interacción del usuario
+    const startOnInteraction = async () => {
+      if (!isPlaying && audioRef.current) {
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+          // Remover listeners después de reproducir
+          document.removeEventListener('click', startOnInteraction);
+          document.removeEventListener('touchstart', startOnInteraction);
+          document.removeEventListener('keydown', startOnInteraction);
+        } catch (error) {
+          console.log('Esperando interacción del usuario');
+        }
+      }
+    };
+
+    document.addEventListener('click', startOnInteraction);
+    document.addEventListener('touchstart', startOnInteraction);
+    document.addEventListener('keydown', startOnInteraction);
+
+    return () => {
+      document.removeEventListener('click', startOnInteraction);
+      document.removeEventListener('touchstart', startOnInteraction);
+      document.removeEventListener('keydown', startOnInteraction);
+    };
+  }, [isPlaying]);
 
   const toggleMute = () => {
     if (audioRef.current) {
-      if (!isPlaying) {
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
       audioRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
@@ -41,7 +64,6 @@ export default function BackgroundMusic() {
         ref={audioRef}
         loop
         preload="auto"
-        muted={isMuted}
       >
         <source src="/music.mp3" type="audio/mpeg" />
         Tu navegador no soporta audio HTML5.
