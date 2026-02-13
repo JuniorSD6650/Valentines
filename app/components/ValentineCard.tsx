@@ -13,13 +13,14 @@ export default function ValentineCard({ message, onNext }: ValentineCardProps) {
   return (
     <div className="perspective-1000 w-full max-w-md">
       <div
-        className={`relative w-full h-64 transition-transform duration-700 transform-style-3d cursor-pointer ${
+        className={`relative w-full h-96 transition-transform duration-700 cursor-pointer ${
           isFlipped ? 'rotate-y-180' : ''
         }`}
+        style={{ transformStyle: 'preserve-3d' }}
         onClick={() => setIsFlipped(!isFlipped)}
       >
         {/* Front */}
-        <div className="absolute w-full h-full backface-hidden bg-gradient-to-br from-pink-400 to-red-400 rounded-2xl shadow-2xl flex items-center justify-center p-8">
+        <div className="absolute w-full h-full bg-gradient-to-br from-pink-400 to-red-400 rounded-2xl shadow-2xl flex items-center justify-center p-8" style={{ backfaceVisibility: 'hidden' }}>
           <div className="text-center">
             <div className="text-6xl mb-4 animate-pulse-heart">💌</div>
             <p className="text-white text-xl font-semibold">Click para ver el mensaje</p>
@@ -27,9 +28,9 @@ export default function ValentineCard({ message, onNext }: ValentineCardProps) {
         </div>
 
         {/* Back */}
-        <div className="absolute w-full h-full backface-hidden bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl shadow-2xl flex items-center justify-center p-8 rotate-y-180">
+        <div className="absolute w-full h-full bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl shadow-2xl flex items-center justify-center p-8 overflow-y-auto" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
           <div className="text-center">
-            <p className="text-white text-2xl font-bold mb-6">{message}</p>
+            <p className={`text-white font-bold mb-6 ${message.length > 150 ? 'text-lg' : 'text-2xl'}`}>{message}</p>
             <button
               onClick={(e) => {
                 e.stopPropagation();

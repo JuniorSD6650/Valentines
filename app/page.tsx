@@ -14,6 +14,7 @@ const loveMessages = [
   'Tu sonrisa ilumina mi mundo de formas que no puedo describir ✨',
   'Eres mi persona favorita en todo el universo 🌟',
   'Cada día a tu lado es un regalo que atesoro 💝',
+  'Gracias por los lindos momentos, por nunca rendirte conmigo, por la paciencia que me tienes y por todas las cosas bonitas que haces por mí. Te amo con todo mi corazón y me haces muy feliz, así que también te haré muy feliz mi Diana Esther Eyseric De Gracia (Mi amor 💖)',
 ];
 
 type Stage = 'fullscreen' | 'welcome' | 'quiz' | 'catcher' | 'memory' | 'messages' | 'final';
@@ -158,7 +159,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-16 text-center text-gray-600">
-          <p className="text-sm">Hecho con ❤️ para San Valentín 2026</p>
+          <p className="text-sm">Nuestro San Valentin | Junior y Diana - Hecho con ❤️ para San Valentín 2026</p>
         </footer>
       </div>
     </>
