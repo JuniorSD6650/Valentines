@@ -7,7 +7,7 @@ interface HeartCatcherProps {
 }
 
 export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
-  const [hearts, setHearts] = useState<{ id: number; x: number; y: number; caught: boolean }[]>([]);
+  const [hearts, setHearts] = useState<{ id: number; x: number; y: number; caught: boolean; currentY?: number }[]>([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const targetScore = 5;
@@ -48,13 +48,21 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
     }
   }, [score, onComplete]);
 
-  const catchHeart = (id: number) => {
-    setHearts((prev) =>
-      prev.map((heart) =>
-        heart.id === id ? { ...heart, caught: true } : heart
-      )
-    );
-    setScore((prev) => prev + 1);
+  const catchHeart = (id: number, event: React.MouseEvent | React.TouchEvent) => {
+    const element = event.currentTarget as HTMLElement;
+    const rect = element.getBoundingClientRect();
+    const parent = element.parentElement?.getBoundingClientRect();
+    
+    if (parent) {
+      const currentY = ((rect.top - parent.top) / parent.height) * 100;
+      
+      setHearts((prev) =>
+        prev.map((heart) =>
+          heart.id === id ? { ...heart, caught: true, currentY } : heart
+        )
+      );
+      setScore((prev) => prev + 1);
+    }
   };
 
   if (score >= targetScore) {
@@ -99,15 +107,25 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
         {hearts.map((heart) => (
           <div
             key={heart.id}
-            className={`absolute text-4xl cursor-pointer transition-all duration-300 ${
-              heart.caught ? 'scale-150 opacity-0' : 'hover:scale-125'
+            className={`absolute text-5xl cursor-pointer select-none ${
+              heart.caught ? 'animate-catch' : ''
             }`}
             style={{
               left: `${heart.x}%`,
-              top: `${heart.y}%`,
-              animation: heart.caught ? 'none' : 'fall 3s linear forwards',
+              top: heart.caught && heart.currentY !== undefined ? `${heart.currentY}%` : `${heart.y}%`,
+              animation: heart.caught ? 'catch 0.4s ease-out forwards' : 'fall 3s linear forwards',
+              padding: '8px',
+              margin: '-8px',
+              pointerEvents: heart.caught ? 'none' : 'auto',
             }}
-            onClick={() => !heart.caught && catchHeart(heart.id)}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              if (!heart.caught) catchHeart(heart.id, e);
+            }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              if (!heart.caught) catchHeart(heart.id, e);
+            }}
           >
             ❤️
           </div>
@@ -117,6 +135,20 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
         @keyframes fall {
           to {
             transform: translateY(450px);
+          }
+        }
+        @keyframes catch {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.5);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(2);
+            opacity: 0;
           }
         }
       `}</style>
