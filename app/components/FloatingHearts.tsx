@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 // ⚙️ VARIABLES DE CONFIGURACIÓN - Ajusta estos valores según el ritmo de tu canción
 const EXPLOSION_DELAY = 76000; // Tiempo de espera inicial (ms) antes de la primera explosión
 const EXPLOSION_INTERVAL = 8000; // Intervalo entre explosiones (ms)
-const HEARTS_PER_EXPLOSION = 30; // Cantidad de corazones por explosión
+const FIRST_EXPLOSION_HEARTS = 50; // Cantidad de corazones en la primera explosión
+const NORMAL_EXPLOSION_HEARTS = 20; // Cantidad de corazones en explosiones subsecuentes
 
 interface FloatingHeartsProps {
   startExplosions?: boolean; // Controla cuándo comienzan las explosiones
@@ -14,6 +15,7 @@ interface FloatingHeartsProps {
 export default function FloatingHearts({ startExplosions = false }: FloatingHeartsProps) {
   const [backgroundHearts, setBackgroundHearts] = useState<{ id: string; left: number; delay: number; duration: number; size: number }[]>([]);
   const [explosionHearts, setExplosionHearts] = useState<{ id: string; left: number; delay: number; duration: number; timestamp: number; size: number }[]>([]);
+  const [isFirstExplosion, setIsFirstExplosion] = useState(true);
 
   // Generar corazones de fondo solo en el cliente
   useEffect(() => {
@@ -31,6 +33,9 @@ export default function FloatingHearts({ startExplosions = false }: FloatingHear
   // Explosiones de corazones al ritmo - solo cuando startExplosions es true
   useEffect(() => {
     if (!startExplosions) return;
+
+    // Resetear para que la primera explosión sea especial
+    setIsFirstExplosion(true);
 
     // Esperar el delay inicial antes de comenzar
     const initialTimeout = setTimeout(() => {
@@ -50,8 +55,9 @@ export default function FloatingHearts({ startExplosions = false }: FloatingHear
 
   const triggerExplosion = () => {
     const timestamp = Date.now();
+    const heartsCount = isFirstExplosion ? FIRST_EXPLOSION_HEARTS : NORMAL_EXPLOSION_HEARTS;
     
-    const newHearts = Array.from({ length: HEARTS_PER_EXPLOSION }, (_, i) => ({
+    const newHearts = Array.from({ length: heartsCount }, (_, i) => ({
       id: `exp-${timestamp}-${i}`,
       left: 20 + Math.random() * 60, // Más distribuido
       delay: Math.random() * 0.3,
@@ -61,6 +67,11 @@ export default function FloatingHearts({ startExplosions = false }: FloatingHear
     }));
 
     setExplosionHearts((prev) => [...prev, ...newHearts]);
+    
+    // Marcar que ya no es la primera explosión
+    if (isFirstExplosion) {
+      setIsFirstExplosion(false);
+    }
 
     // Limpiar corazones después de que terminen su animación
     setTimeout(() => {

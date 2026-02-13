@@ -138,7 +138,7 @@ export default function Home() {
                 ¡Feliz San Valentín!
               </h1>
               <p className="text-2xl md:text-3xl text-gray-700 mb-8 font-semibold">
-                Gracias por compartir este momento especial
+                Si lees esto escribeme al privado "I❤U Junior" para darte una sorpresa extra 😘 
               </p>
               <div className="space-y-4 mb-8">
                 <p className="text-xl text-gray-600 italic">
