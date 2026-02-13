@@ -6,21 +6,34 @@ interface HeartCatcherProps {
   onComplete: () => void;
 }
 
+type FallingObject = {
+  id: number;
+  x: number;
+  y: number;
+  caught: boolean;
+  currentY?: number;
+  type: 'heart' | 'bomb'; // ❤️ corazones o 💣 bombas
+};
+
 export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
-  const [hearts, setHearts] = useState<{ id: number; x: number; y: number; caught: boolean; currentY?: number }[]>([]);
+  const [objects, setObjects] = useState<FallingObject[]>([]);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(22); // Aumentado a 20 segundos
   const targetScore = 5;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setHearts((prev) => [
+      // 35% probabilidad de bomba, 65% de corazón
+      const isBomb = Math.random() < 0.45;
+      
+      setObjects((prev) => [
         ...prev,
         {
           id: Date.now(),
           x: Math.random() * 80 + 10,
           y: -10,
           caught: false,
+          type: isBomb ? 'bomb' : 'heart',
         },
       ]);
     }, 800);
@@ -48,20 +61,27 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
     }
   }, [score, onComplete]);
 
-  const catchHeart = (id: number, event: React.MouseEvent | React.TouchEvent) => {
+  const catchObject = (id: number, event: React.MouseEvent | React.TouchEvent) => {
     const element = event.currentTarget as HTMLElement;
     const rect = element.getBoundingClientRect();
     const parent = element.parentElement?.getBoundingClientRect();
     
     if (parent) {
       const currentY = ((rect.top - parent.top) / parent.height) * 100;
+      const obj = objects.find(o => o.id === id);
       
-      setHearts((prev) =>
-        prev.map((heart) =>
-          heart.id === id ? { ...heart, caught: true, currentY } : heart
+      setObjects((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, caught: true, currentY } : item
         )
       );
-      setScore((prev) => prev + 1);
+      
+      // Si es corazón suma 1, si es bomba resta 1 (mínimo 0)
+      if (obj?.type === 'heart') {
+        setScore((prev) => prev + 1);
+      } else {
+        setScore((prev) => Math.max(0, prev - 1));
+      }
     }
   };
 
@@ -86,8 +106,8 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
         <button
           onClick={() => {
             setScore(0);
-            setTimeLeft(10);
-            setHearts([]);
+            setTimeLeft(20);
+            setObjects([]);
           }}
           className="bg-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-pink-600 transition-colors shadow-lg"
         >
@@ -104,30 +124,30 @@ export default function HeartCatcher({ onComplete }: HeartCatcherProps) {
         <span className="text-pink-600">⏱️ Tiempo: {timeLeft}s</span>
       </div>
       <div className="relative w-full h-96 bg-white/30 rounded-2xl overflow-hidden border-4 border-pink-300 shadow-xl">
-        {hearts.map((heart) => (
+        {objects.map((obj) => (
           <div
-            key={heart.id}
+            key={obj.id}
             className={`absolute text-5xl cursor-pointer select-none ${
-              heart.caught ? 'animate-catch' : ''
+              obj.caught ? 'animate-catch' : ''
             }`}
             style={{
-              left: `${heart.x}%`,
-              top: heart.caught && heart.currentY !== undefined ? `${heart.currentY}%` : `${heart.y}%`,
-              animation: heart.caught ? 'catch 0.4s ease-out forwards' : 'fall 3s linear forwards',
+              left: `${obj.x}%`,
+              top: obj.caught && obj.currentY !== undefined ? `${obj.currentY}%` : `${obj.y}%`,
+              animation: obj.caught ? 'catch 0.4s ease-out forwards' : 'fall 3s linear forwards',
               padding: '8px',
               margin: '-8px',
-              pointerEvents: heart.caught ? 'none' : 'auto',
+              pointerEvents: obj.caught ? 'none' : 'auto',
             }}
             onMouseDown={(e) => {
               e.preventDefault();
-              if (!heart.caught) catchHeart(heart.id, e);
+              if (!obj.caught) catchObject(obj.id, e);
             }}
             onTouchStart={(e) => {
               e.preventDefault();
-              if (!heart.caught) catchHeart(heart.id, e);
+              if (!obj.caught) catchObject(obj.id, e);
             }}
           >
-            ❤️
+            {obj.type === 'heart' ? '❤️' : '💔'}
           </div>
         ))}
       </div>
