@@ -6,7 +6,7 @@ import HeartCatcher from './components/HeartCatcher';
 import MemoryGame from './components/MemoryGame';
 import LoveQuiz from './components/LoveQuiz';
 import FloatingHearts from './components/FloatingHearts';
-import BackgroundMusic from './components/BackgroundMusic';
+import ControlPanel from './components/ControlPanel';
 
 const loveMessages = [
   'Eres la razón por la que mi corazón late más fuerte cada día ❤️',
@@ -16,11 +16,20 @@ const loveMessages = [
   'Cada día a tu lado es un regalo que atesoro 💝',
 ];
 
-type Stage = 'welcome' | 'quiz' | 'catcher' | 'memory' | 'messages' | 'final';
+type Stage = 'fullscreen' | 'welcome' | 'quiz' | 'catcher' | 'memory' | 'messages' | 'final';
 
 export default function Home() {
-  const [stage, setStage] = useState<Stage>('welcome');
+  const [stage, setStage] = useState<Stage>('fullscreen');
   const [currentMessage, setCurrentMessage] = useState(0);
+
+  const enterFullscreenAndStart = async () => {
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (error) {
+      console.log('Fullscreen not supported or denied');
+    }
+    setStage('welcome');
+  };
 
   const nextMessage = () => {
     if (currentMessage < loveMessages.length - 1) {
@@ -33,21 +42,48 @@ export default function Home() {
   return (
     <>
       <FloatingHearts />
-      <BackgroundMusic />
+      {stage !== 'fullscreen' && <ControlPanel />}
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
         <div className="max-w-4xl w-full">
+          {stage === 'fullscreen' && (
+            <div className="text-center animate-float">
+              <h1 className="text-6xl md:text-8xl font-bold text-pink-600 mb-6 drop-shadow-lg">
+                San Valentín
+              </h1>
+              <p className="text-2xl md:text-3xl text-gray-700 mb-8 font-semibold">
+                Mi Diana, antes de comenzar, tengo un pequeño favor que pedirte... 🙈
+              </p>
+              <div className="space-y-4 mb-8">
+                <p className="text-xl text-gray-600">🎧 Asegúrate de tener el sonido activado</p>
+                <p className="text-xl text-gray-600">✨ Activa la pantalla completa</p>
+              </div>
+              <button
+                onClick={enterFullscreenAndStart}
+                className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-12 py-4 rounded-full text-2xl font-bold hover:from-pink-600 hover:to-red-600 transition-all shadow-2xl hover:scale-110 transform"
+              >
+                Pantalla Completa 🎬
+              </button>
+              <button
+                onClick={() => setStage('welcome')}
+                className="mt-4 block mx-auto text-gray-500 hover:text-gray-700 underline text-sm"
+              >
+                Continuar sin pantalla completa
+              </button>
+            </div>
+          )}
+
           {stage === 'welcome' && (
             <div className="text-center animate-float">
               <h1 className="text-6xl md:text-8xl font-bold text-pink-600 mb-6 drop-shadow-lg">
-                💝 San Valentín 💝
+                San Valentín
               </h1>
               <p className="text-2xl md:text-3xl text-gray-700 mb-8 font-semibold">
-                Una experiencia interactiva llena de amor
+                Hola amor, tengo algo especial preparado para ti hoy... 💖
               </p>
               <div className="space-y-4 mb-8">
-                <p className="text-xl text-gray-600">✨ Juegos divertidos</p>
-                <p className="text-xl text-gray-600">💌 Mensajes especiales</p>
-                <p className="text-xl text-gray-600">❤️ Mucho amor</p>
+                <p className="text-xl text-gray-600">TE</p>
+                <p className="text-xl text-gray-600">AMO MUCHO</p>
+                <p className="text-xl text-gray-600">MI ENOJONA</p>
               </div>
               <button
                 onClick={() => setStage('quiz')}
